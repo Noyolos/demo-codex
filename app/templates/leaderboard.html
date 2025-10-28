@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ app_title }} · {{ t('nav.leaderboard') }}{% endblock %}
+
+{% block content %}
+<div class="page leaderboard">
+    <section class="panel">
+        <header class="panel-header">
+            <h1>{{ t('leaderboard.title') }}</h1>
+            <p>{{ t('leaderboard.description') }}</p>
+        </header>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>{{ t('leaderboard.rank') }}</th>
+                        <th>{{ t('leaderboard.student') }}</th>
+                        <th>{{ t('leaderboard.xp') }}</th>
+                        <th>{{ t('leaderboard.level') }}</th>
+                        <th>{{ t('leaderboard.badges') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in leaderboard_rows %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ row.username|title }}</td>
+                            <td>{{ row.xp }}</td>
+                            <td>{{ row.level }}</td>
+                            <td>{{ row.badges }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

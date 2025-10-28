@@ -1,11 +1,69 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - Flask Demo{% endblock %}
+{% block title %}{{ app_title }} · {{ t('nav.home') }}{% endblock %}
 
 {% block content %}
 <section class="hero">
-    <h1>Welcome to the Flask Demo Project</h1>
-    <p>This starter application includes a homepage, login page, and organized project structure.</p>
-    <a class="button" href="{{ url_for('login') }}">Get Started</a>
+    <div class="hero-copy">
+        <h1>{{ t('home.hero_title') }}</h1>
+        <p>{{ t('home.hero_subtitle') }}</p>
+        {% if current_user %}
+            <a class="button" href="{{ url_for('dashboard') }}">{{ t('home.hero_cta') }}</a>
+        {% else %}
+            <a class="button" href="{{ url_for('login') }}">{{ t('nav.login') }}</a>
+        {% endif %}
+    </div>
+    <div class="hero-illustration" aria-hidden="true">
+        <div class="xp-ring">
+            <span class="xp-value">XP</span>
+        </div>
+        <div class="badge-card">
+            <span>★</span>
+            <p>{{ t('home.hero_badge_points') }}</p>
+        </div>
+        <div class="level-card">
+            <h2>{{ t('home.hero_level', level=3) }}</h2>
+            <p>{{ t('home.hero_streak', streak=5) }}</p>
+        </div>
+    </div>
 </section>
+
+<section class="feature-grid">
+    <h2>{{ t('home.features_title') }}</h2>
+    <div class="grid">
+        <article class="feature">
+            <h3>🎮</h3>
+            <p>{{ t('home.feature_gamified') }}</p>
+        </article>
+        <article class="feature">
+            <h3>📊</h3>
+            <p>{{ t('home.feature_tracking') }}</p>
+        </article>
+        <article class="feature">
+            <h3>🌐</h3>
+            <p>{{ t('home.feature_multilingual') }}</p>
+        </article>
+        <article class="feature">
+            <h3>📱</h3>
+            <p>{{ t('home.feature_responsive') }}</p>
+        </article>
+    </div>
+</section>
+
+{% if quizzes %}
+<section class="quiz-preview">
+    <h2>{{ t('quizzes.title') }}</h2>
+    <ul class="quiz-list">
+        {% for quiz_id, quiz in quizzes.items() %}
+            <li>
+                <div>
+                    <h3>{{ quiz.title[current_language] }}</h3>
+                    <p>{{ t('quizzes.points') }}: {{ quiz.points }} · {{ t('quizzes.difficulty') }}: {{ quiz.difficulty[current_language] }}</p>
+                </div>
+                <a href="{{ url_for('quizzes_list') }}" class="button ghost">{{ t('quizzes.take_button') }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
 {% endblock %}
