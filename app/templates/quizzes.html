@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ app_title }} · {{ t('nav.quizzes') }}{% endblock %}
+
+{% block content %}
+<div class="page quizzes">
+    <section class="panel">
+        <header class="panel-header">
+            <h1>{{ t('quizzes.title') }}</h1>
+            <p>{{ t('quizzes.description') }}</p>
+        </header>
+        <div class="card-grid">
+            {% for quiz in quizzes %}
+                <article class="quiz-card {% if quiz.completed %}completed{% endif %}">
+                    <h2>{{ quiz.title[current_language] }}</h2>
+                    <p>{{ t('quizzes.points') }}: {{ quiz.points }}</p>
+                    <p>{{ t('quizzes.difficulty') }}: {{ quiz.difficulty[current_language] }}</p>
+                    {% if quiz.completed %}
+                        <p class="quiz-status">{{ t('quizzes.completed_label') }} · {{ quiz.score }}%</p>
+                    {% endif %}
+                    <a href="{{ url_for('quiz_detail', quiz_id=quiz.id) }}" class="button small">{{ t('dashboard.take_quiz') }}</a>
+                </article>
+            {% else %}
+                <p class="empty-state">{{ t('dashboard.take_quiz') }}</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

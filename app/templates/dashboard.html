@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ app_title }} · {{ t('nav.dashboard') }}{% endblock %}
+
+{% block content %}
+<div class="page dashboard">
+    {% if is_admin %}
+        <section class="panel">
+            <header class="panel-header">
+                <h1>{{ t('dashboard.admin_title') }}</h1>
+                <p>{{ t('dashboard.admin_intro') }}</p>
+            </header>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>{{ t('leaderboard.rank') }}</th>
+                            <th>{{ t('leaderboard.student') }}</th>
+                            <th>{{ t('leaderboard.xp') }}</th>
+                            <th>{{ t('leaderboard.level') }}</th>
+                            <th>{{ t('dashboard.completed') }}</th>
+                            <th>{{ t('dashboard.avg_score') }}</th>
+                            <th>{{ t('dashboard.badges') }}</th>
+                            <th>{{ t('dashboard.last_active') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in student_stats %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ stat.username|title }}</td>
+                                <td>{{ stat.xp }}</td>
+                                <td>{{ stat.level }}</td>
+                                <td>{{ stat.completed }}</td>
+                                <td>{{ stat.avg_score }}%</td>
+                                <td>{{ stat.badges|length }}</td>
+                                <td>{{ format_datetime(stat.last_active) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <section class="panel">
+            <header class="panel-header">
+                <h1>{{ t('dashboard.student_title') }}</h1>
+                <p>{{ t('dashboard.overview') }}</p>
+            </header>
+            <div class="stat-grid">
+                <article class="stat">
+                    <h2>{{ t('dashboard.xp') }}</h2>
+                    <p class="stat-value">{{ current_user.xp }}</p>
+                </article>
+                <article class="stat">
+                    <h2>{{ t('dashboard.level') }}</h2>
+                    <p class="stat-value">{{ current_user.level }}</p>
+                </article>
+                <article class="stat">
+                    <h2>{{ t('dashboard.badges') }}</h2>
+                    <p class="stat-value">{{ current_user.badges|length }}</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <header class="panel-header">
+                <h2>{{ t('dashboard.badges') }}</h2>
+            </header>
+            {% if current_user.badges %}
+                <ul class="badge-grid">
+                    {% for badge_id in current_user.badges %}
+                        {% set badge = badge_details(badge_id) %}
+                        {% if badge %}
+                            <li>
+                                <h3>🏅 {{ badge.name[current_language] }}</h3>
+                                <p>{{ badge.description[current_language] }}</p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-state">{{ t('dashboard.no_badges') }}</p>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <header class="panel-header">
+                <h2>{{ t('dashboard.recent_progress') }}</h2>
+            </header>
+            {% if progress %}
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>{{ t('dashboard.quiz') }}</th>
+                                <th>{{ t('dashboard.score') }}</th>
+                                <th>{{ t('quizzes.points') }}</th>
+                                <th>{{ t('dashboard.date') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in progress %}
+                                <tr>
+                                    {% set quiz = quizzes.get(record.quiz_id) %}
+                                    <td>{{ quiz.title[current_language] }}</td>
+                                    <td>{{ record.score }}%</td>
+                                    <td>{{ record.xp_earned }} XP</td>
+                                    <td>{{ format_datetime(record.completed_at) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="empty-state">{{ t('dashboard.no_progress') }}</p>
+            {% endif %}
+        </section>
+
+        <section class="panel">
+            <header class="panel-header">
+                <h2>{{ t('quizzes.title') }}</h2>
+                <p>{{ t('quizzes.description') }}</p>
+            </header>
+            <div class="card-grid">
+                {% for card in quiz_cards %}
+                    <article class="quiz-card {% if card.completed %}completed{% endif %}">
+                        <h3>{{ card.title[current_language] }}</h3>
+                        <p>{{ t('quizzes.points') }}: {{ card.points }}</p>
+                        <p>{{ t('quizzes.difficulty') }}: {{ card.difficulty[current_language] }}</p>
+                        {% if card.completed %}
+                            <p class="quiz-status">{{ t('quizzes.completed_label') }} · {{ card.score }}%</p>
+                        {% endif %}
+                        <a href="{{ url_for('quiz_detail', quiz_id=card.id) }}" class="button small">{{ t('dashboard.take_quiz') }}</a>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

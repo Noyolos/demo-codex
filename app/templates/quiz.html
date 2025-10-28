@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ app_title }} · {{ quiz.title[current_language] }}{% endblock %}
+
+{% block content %}
+<div class="page quiz-detail">
+    <section class="panel">
+        <header class="panel-header">
+            <h1>{{ quiz.title[current_language] }}</h1>
+            <p>{{ t('quizzes.points') }}: {{ quiz.points }} · {{ t('quizzes.difficulty') }}: {{ quiz.difficulty[current_language] }}</p>
+        </header>
+        <form method="post" class="quiz-form" novalidate>
+            {% for question in quiz.questions %}
+                <fieldset>
+                    <legend>{{ loop.index }}. {{ question.prompt[current_language] }}</legend>
+                    {% for option in question.options %}
+                        <label class="option">
+                            <input type="radio" name="{{ question.id }}" value="{{ option.value }}" required>
+                            <span>{{ option.label[current_language] }}</span>
+                        </label>
+                    {% endfor %}
+                </fieldset>
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit">{{ t('quiz.submit_button') }}</button>
+                <a href="{{ url_for('quizzes_list') }}" class="button ghost">{{ t('nav.quizzes') }}</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
