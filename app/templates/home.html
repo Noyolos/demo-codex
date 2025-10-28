@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Flask Demo{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Welcome to the Flask Demo Project</h1>
+    <p>This starter application includes a homepage, login page, and organized project structure.</p>
+    <a class="button" href="{{ url_for('login') }}">Get Started</a>
+</section>
+{% endblock %}
